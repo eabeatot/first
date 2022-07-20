@@ -1,22 +1,26 @@
 import streamlit as st
+import sqlite3
 
+con = sqlite3.connect('db.db')
+cur = con.cursor()
+
+def login_user(id, pw):
+    cur.execute(f'SELECT * '
+                f'FROM users '
+                f'WHERE id="{id}" and pw = "{pw}"')
+    return cur.fetchone()
 menu = st.sidebar.selectbox('MENU', options=['로그인', '회원가입', '회원목록'])
 
 if menu == '로그인':
     st.subheader('로그인')
+    login_id=st.text_input('아이디', placeholder='아이디를 삽입')
+    login_pw = st.text_input('비밀번호', placeholder='비밀번호를 삽입',type='password')
     st.sidebar.subheader('로그인')
 
-    login_id = st.sidebar.text_input('아이디', placeholder='아이디를 입력하세요')
-    login_pw = st.sidebar.text_input('패스워드',
-                                     placeholder='패스워드를 입력하세요',
-                                     type='password')
-
-    login_btn = st.sidebar.button('로그인')
-
+    login_btn=st.button('로그인')
     if login_btn:
-        st.sidebar.write(login_id)
-        st.sidebar.write(login_pw)
-
+        user_info=login_user(login_id, login_pw)
+        st.write(user_info[4],'님 환영합니다.')
 if menu == '회원가입':
     st.subheader('회원가입')
     st.sidebar.write('회원가입')
